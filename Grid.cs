@@ -98,5 +98,59 @@ namespace grid
                 }
             }
         }
+
+        public void Move(char player, string dir)
+        {
+            bool playerFound = false;
+            int playerColumn = 0;
+            int playerRow = 0;
+
+            for (int j = 1; j <= 9; j++)
+            {
+                for (int i = 1; i <= 9; i++)
+                {
+                    if (this.rows[j][i] == player)
+                    {
+                        playerRow = j;
+                        playerColumn = i;
+                        playerFound = true;
+                        break;
+                    }
+                }
+                if (playerFound) {break;}
+            }
+
+            int newRow = playerRow;
+            int newColumn = playerColumn;
+            switch (dir.ToLower())
+            {
+                case "up":
+                case "u":
+                    newRow--;
+                    break;
+                case "down":
+                case "d":
+                    newRow++;
+                    break;
+                case "left":
+                case "l":
+                    newColumn--;
+                    break;
+                case "right":
+                case "r":
+                    newColumn++;
+                    break;
+                default:
+                    break;
+            }
+            
+            if (newRow > 9 || newRow < 1 || newColumn > 9 || newColumn < 1)
+            {
+                return;
+            }
+            
+            this.rows[playerRow][playerColumn] = '-';
+            this.rows[newRow][newColumn] = player;
+        }
     }
 }

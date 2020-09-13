@@ -7,7 +7,7 @@ namespace grid
         static void Main(string[] args)
         {
             var myGrid = new Grid();
-            myGrid.Set('E', '5', 'O');
+            myGrid.MoveMode();
             
             while (true)
             {
@@ -37,7 +37,7 @@ namespace grid
                         continue;
                 }
 
-                myGrid.Move('O', dirString);
+                myGrid.Move(dirString);
             }
         }
     }

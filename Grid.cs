@@ -15,6 +15,18 @@ namespace grid
         private char[] rowH;
         private char[] rowI;
         private char[][] rows;
+
+        private bool IsMoveMode
+        {get; set;}
+        
+        public char Player
+        {get; set;}
+
+        public char Point
+        {get; set;}
+
+        public int Score
+        {get; private set;}
         
         public void Display()
         {
@@ -23,65 +35,125 @@ namespace grid
             {
                 Console.WriteLine(string.Join("  ", row));
             }
-            
+            if (IsMoveMode)
+            {
+                Console.WriteLine("     SCORE:  " + Score);
+            }
         }
 
-        public Grid()
+        public Grid(char player, char point)
         {
-            this.rowA = new char[]
+            rowA = new char[]
             {'A', '-', '-', '-', '-', '-', '-', '-', '-', '-'};
-            this.rowB = new char[]
+            rowB = new char[]
             {'B', '-', '-', '-', '-', '-', '-', '-', '-', '-'};
-            this.rowC = new char[]
+            rowC = new char[]
             {'C', '-', '-', '-', '-', '-', '-', '-', '-', '-'};
-            this.rowD = new char[]
+            rowD = new char[]
             {'D', '-', '-', '-', '-', '-', '-', '-', '-', '-'};
-            this.rowE = new char[]
+            rowE = new char[]
             {'E', '-', '-', '-', '-', '-', '-', '-', '-', '-'};
-            this.rowF = new char[]
+            rowF = new char[]
             {'F', '-', '-', '-', '-', '-', '-', '-', '-', '-'};
-            this.rowG = new char[]
+            rowG = new char[]
             {'G', '-', '-', '-', '-', '-', '-', '-', '-', '-'};
-            this.rowH = new char[]
+            rowH = new char[]
             {'H', '-', '-', '-', '-', '-', '-', '-', '-', '-'};
-            this.rowI = new char[]
+            rowI = new char[]
             {'I', '-', '-', '-', '-', '-', '-', '-', '-', '-'};
 
-            this.rows = new char[][]
-            {this.columnNums, this.rowA, this.rowB, this.rowC, this.rowD,
-            this.rowE, this.rowF, this.rowG, this.rowH, this.rowI};
+            rows = new char[][]
+            {columnNums, rowA, rowB, rowC, rowD,
+            rowE, rowF, rowG, rowH, rowI};
+
+            this.IsMoveMode = false;
+            this.Player = player;
+            this.Point = point;
         }
 
+        public Grid() : this('O', '+')
+        {
+        }
+
+        public void MoveMode()
+        {
+            IsMoveMode = true;
+            
+            var random = new Random();
+            int row;
+            int col;
+            
+            row = random.Next(1, 10);
+            col = random.Next(1, 10);
+
+            rows[row][col] = Player;
+            SpawnPoint();
+        }
+        
+        private void SpawnPoint()
+        {
+            var random = new Random();
+            int row;
+            int col;
+            
+            do
+            {
+                row = random.Next(1, 10);
+                col = random.Next(1, 10);
+            }
+            while (rows[row][col] != '-');
+
+            rows[row][col] = Point;
+        }
+        
+        private void Update(bool gotPoint)
+        {
+            if (gotPoint)
+            {
+                Score++;
+                SpawnPoint();
+            }
+        }
+        
         public void Set(char r, char c, char x)
         {            
             switch (char.ToUpper(r))
             {
                 case 'A':
-                    this.rowA[Int32.Parse(c.ToString())] = x;
+                case '1':
+                    rowA[Int32.Parse(c.ToString())] = x;
                     break;
                 case 'B':
-                    this.rowB[Int32.Parse(c.ToString())] = x;
+                case '2':
+                    rowB[Int32.Parse(c.ToString())] = x;
                     break;
                 case 'C':
-                    this.rowC[Int32.Parse(c.ToString())] = x;
+                case '3':
+                    rowC[Int32.Parse(c.ToString())] = x;
                     break;
                 case 'D':
-                    this.rowD[Int32.Parse(c.ToString())] = x;
+                case '4':
+                    rowD[Int32.Parse(c.ToString())] = x;
                     break;
                 case 'E':
-                    this.rowE[Int32.Parse(c.ToString())] = x;
+                case '5':
+                    rowE[Int32.Parse(c.ToString())] = x;
                     break;
                 case 'F':
-                    this.rowF[Int32.Parse(c.ToString())] = x;
+                case '6':
+                    rowF[Int32.Parse(c.ToString())] = x;
                     break;
                 case 'G':
-                    this.rowG[Int32.Parse(c.ToString())] = x;
+                case '7':
+                    rowG[Int32.Parse(c.ToString())] = x;
                     break;
                 case 'H':
-                    this.rowH[Int32.Parse(c.ToString())] = x;
+                case '8':
+                    rowH[Int32.Parse(c.ToString())] = x;
                     break;
                 case 'I':
-                    this.rowI[Int32.Parse(c.ToString())] = x;
+                case '9':
+                    rowI[Int32.Parse(c.ToString())] = x;
                     break;
                 default:
                     break;
@@ -94,12 +166,12 @@ namespace grid
             {
                 for (int i = 1; i <= 9; i++)
                 {
-                    this.rows[j][i] = '-';
+                    rows[j][i] = '-';
                 }
             }
         }
 
-        public void Move(char player, string dir)
+        public void Move(string dir)
         {
             bool playerFound = false;
             int playerColumn = 0;
@@ -109,7 +181,7 @@ namespace grid
             {
                 for (int i = 1; i <= 9; i++)
                 {
-                    if (this.rows[j][i] == player)
+                    if (rows[j][i] == Player)
                     {
                         playerRow = j;
                         playerColumn = i;
@@ -149,8 +221,12 @@ namespace grid
                 return;
             }
             
-            this.rows[playerRow][playerColumn] = '-';
-            this.rows[newRow][newColumn] = player;
+            bool gotPoint = false;
+            
+            if (rows[newRow][newColumn] == Point) {gotPoint = true;}
+            rows[playerRow][playerColumn] = '-';
+            rows[newRow][newColumn] = Player;
+            Update(gotPoint);
         }
     }
 }

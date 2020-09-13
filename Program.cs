@@ -47,7 +47,7 @@ namespace grid
                     continue;
                 }
 
-                // Display grid with user input
+                // Set input on grid
                 myGrid.Set(coord[0], coord[1], letter);
             }
         }

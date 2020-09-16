@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Threading;
 
 namespace grid
 {
@@ -16,9 +18,6 @@ namespace grid
         private char[] rowI;
         private char[][] rows;
 
-        private bool IsMoveMode
-        {get; set;}
-        
         public char Player
         {get; set;}
 
@@ -27,6 +26,11 @@ namespace grid
 
         public int Score
         {get; private set;}
+
+        private Timer objTimer
+        {get; set;}
+        private int Timer
+        {get; set;}
         
         public void Display()
         {
@@ -35,10 +39,8 @@ namespace grid
             {
                 Console.WriteLine(string.Join("  ", row));
             }
-            if (IsMoveMode)
-            {
-                Console.WriteLine("     SCORE:  " + Score);
-            }
+            Console.WriteLine("     SCORE:  " + Score);
+            Console.WriteLine("     TIMER:  " + Timer);
         }
 
         public Grid(char player, char point)
@@ -66,18 +68,24 @@ namespace grid
             {columnNums, rowA, rowB, rowC, rowD,
             rowE, rowF, rowG, rowH, rowI};
 
-            this.IsMoveMode = false;
+            this.Timer = 5;
             this.Player = player;
             this.Point = point;
+        }
+
+        private void Callback(Object stateInfo)
+        {
+            Timer--;
+            Update();
         }
 
         public Grid() : this('O', '+')
         {
         }
 
-        public void MoveMode()
+        public void Play()
         {
-            IsMoveMode = true;
+            this.objTimer = new Timer(Callback, null, 1000, 1000);
             
             var random = new Random();
             int row;
@@ -88,31 +96,80 @@ namespace grid
 
             rows[row][col] = Player;
             SpawnPoint();
+            Update();
         }
         
-        private void SpawnPoint()
+        private void SpawnPoint(int amount = 1)
         {
             var random = new Random();
             int row;
             int col;
             
-            do
+            for (int i = 1; i <= amount; i++)
             {
-                row = random.Next(1, 10);
-                col = random.Next(1, 10);
-            }
-            while (rows[row][col] != '-');
+                do
+                {
+                    row = random.Next(1, 10);
+                    col = random.Next(1, 10);
+                }
+                while (rows[row][col] != '-');
 
-            rows[row][col] = Point;
+                rows[row][col] = Point;
+            }
         }
         
-        private void Update(bool gotPoint)
+        private void Update()
         {
-            if (gotPoint)
+            bool noPoints = true;
+
+            if (Timer == 0)
+            {
+                objTimer.Dispose();
+                GameOver();
+            }
+            
+            foreach (var row in rows)
+            {
+                if (row.Contains<char>(Point))
+                {
+                    noPoints = false;
+                    break;
+                }
+            }
+
+            if (noPoints)
             {
                 Score++;
-                SpawnPoint();
+                Timer = 5;
+                SpawnPoint(Score/5 + 1);
             }
+
+            Display();
+            
+            var dirInput = Console.ReadKey().Key;
+            string dirString = null;
+            switch (dirInput)
+            {
+                case ConsoleKey.Escape:
+                    return;
+                case ConsoleKey.W:
+                    dirString = "up";
+                    break;
+                case ConsoleKey.S:
+                    dirString = "down";
+                    break;
+                case ConsoleKey.A:
+                    dirString = "left";
+                    break;
+                case ConsoleKey.D:
+                    dirString = "right";
+                    break;
+                default:
+                    dirString = "null";
+                    break;
+            }
+
+            Move(dirString);
         }
         
         public void Set(char r, char c, char x)
@@ -194,6 +251,7 @@ namespace grid
 
             int newRow = playerRow;
             int newColumn = playerColumn;
+            bool invalid = false;
             switch (dir.ToLower())
             {
                 case "up":
@@ -213,20 +271,28 @@ namespace grid
                     newColumn++;
                     break;
                 default:
+                    invalid = true;
                     break;
             }
             
             if (newRow > 9 || newRow < 1 || newColumn > 9 || newColumn < 1)
             {
-                return;
+                invalid = true;
             }
             
-            bool gotPoint = false;
-            
-            if (rows[newRow][newColumn] == Point) {gotPoint = true;}
-            rows[playerRow][playerColumn] = '-';
-            rows[newRow][newColumn] = Player;
-            Update(gotPoint);
+            if (!invalid)
+            {
+                rows[playerRow][playerColumn] = '-';
+                rows[newRow][newColumn] = Player;
+            }
+            Update();
+        }
+
+        public void GameOver()
+        {
+            Console.WriteLine(" / / / GAME OVER!!! \\ \\ \\");
+            Console.WriteLine($"   / / / SCORE: {Score} \\ \\ \\");
+            System.Environment.Exit(0);
         }
     }
 }

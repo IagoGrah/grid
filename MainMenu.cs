@@ -2,7 +2,7 @@ using System;
 
 namespace grid
 {
-    class PlayerMove
+    class MainMenu
     {
         static void Main(string[] args)
         {

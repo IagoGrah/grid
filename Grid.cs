@@ -290,6 +290,7 @@ namespace grid
 
         public void GameOver()
         {
+            Display();
             Console.WriteLine(" / / / GAME OVER!!! \\ \\ \\");
             Console.WriteLine($"   / / / SCORE: {Score} \\ \\ \\");
             System.Environment.Exit(0);

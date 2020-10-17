@@ -6,17 +6,7 @@ namespace grid
 {
     public class Grid
     {   
-        private char[] columnNums = new char[] {'X', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-        private char[] rowA;
-        private char[] rowB;
-        private char[] rowC;
-        private char[] rowD;
-        private char[] rowE;
-        private char[] rowF;
-        private char[] rowG;
-        private char[] rowH;
-        private char[] rowI;
-        private char[][] rows;
+        private char[,] grid;
 
         public char Player
         {get; set;}
@@ -35,9 +25,13 @@ namespace grid
         public void Display()
         {
             Console.Clear();
-            foreach (var row in rows)
+            for (int i = 0; i < 10; i++)
             {
-                Console.WriteLine(string.Join("  ", row));
+                for (int j = 0; j < 10; j++)
+                {
+                    Console.Write(grid[i,j] + "  ");
+                }
+                Console.WriteLine();
             }
             Console.WriteLine("     SCORE:  " + Score);
             Console.WriteLine("     TIMER:  " + Timer);
@@ -45,28 +39,19 @@ namespace grid
 
         public Grid(char player, char point)
         {
-            rowA = new char[]
-            {'A', '-', '-', '-', '-', '-', '-', '-', '-', '-'};
-            rowB = new char[]
-            {'B', '-', '-', '-', '-', '-', '-', '-', '-', '-'};
-            rowC = new char[]
-            {'C', '-', '-', '-', '-', '-', '-', '-', '-', '-'};
-            rowD = new char[]
-            {'D', '-', '-', '-', '-', '-', '-', '-', '-', '-'};
-            rowE = new char[]
-            {'E', '-', '-', '-', '-', '-', '-', '-', '-', '-'};
-            rowF = new char[]
-            {'F', '-', '-', '-', '-', '-', '-', '-', '-', '-'};
-            rowG = new char[]
-            {'G', '-', '-', '-', '-', '-', '-', '-', '-', '-'};
-            rowH = new char[]
-            {'H', '-', '-', '-', '-', '-', '-', '-', '-', '-'};
-            rowI = new char[]
-            {'I', '-', '-', '-', '-', '-', '-', '-', '-', '-'};
-
-            rows = new char[][]
-            {columnNums, rowA, rowB, rowC, rowD,
-            rowE, rowF, rowG, rowH, rowI};
+            grid = new char[,]
+            {
+                {'X', '1', '2', '3', '4', '5', '6', '7', '8', '9'},
+                {'A', '-', '-', '-', '-', '-', '-', '-', '-', '-'},
+                {'B', '-', '-', '-', '-', '-', '-', '-', '-', '-'},
+                {'C', '-', '-', '-', '-', '-', '-', '-', '-', '-'},
+                {'D', '-', '-', '-', '-', '-', '-', '-', '-', '-'},
+                {'E', '-', '-', '-', '-', '-', '-', '-', '-', '-'},
+                {'F', '-', '-', '-', '-', '-', '-', '-', '-', '-'},
+                {'G', '-', '-', '-', '-', '-', '-', '-', '-', '-'},
+                {'H', '-', '-', '-', '-', '-', '-', '-', '-', '-'},
+                {'I', '-', '-', '-', '-', '-', '-', '-', '-', '-'}
+            };
 
             this.Timer = 5;
             this.Player = player;
@@ -94,7 +79,7 @@ namespace grid
             row = random.Next(1, 10);
             col = random.Next(1, 10);
 
-            rows[row][col] = Player;
+            grid[row,col] = Player;
             SpawnPoint();
             Update();
         }
@@ -112,9 +97,9 @@ namespace grid
                     row = random.Next(1, 10);
                     col = random.Next(1, 10);
                 }
-                while (rows[row][col] != '-');
+                while (grid[row,col] != '-');
 
-                rows[row][col] = Point;
+                grid[row,col] = Point;
             }
         }
         
@@ -128,9 +113,9 @@ namespace grid
                 GameOver();
             }
             
-            foreach (var row in rows)
+            foreach (var c in grid)
             {
-                if (row.Contains<char>(Point))
+                if (c == Point)
                 {
                     noPoints = false;
                     break;
@@ -178,39 +163,39 @@ namespace grid
             {
                 case 'A':
                 case '1':
-                    rowA[Int32.Parse(c.ToString())] = x;
+                    grid[1, Int32.Parse(c.ToString())] = x;
                     break;
                 case 'B':
                 case '2':
-                    rowB[Int32.Parse(c.ToString())] = x;
+                    grid[2, Int32.Parse(c.ToString())] = x;
                     break;
                 case 'C':
                 case '3':
-                    rowC[Int32.Parse(c.ToString())] = x;
+                    grid[3, Int32.Parse(c.ToString())] = x;
                     break;
                 case 'D':
                 case '4':
-                    rowD[Int32.Parse(c.ToString())] = x;
+                    grid[4, Int32.Parse(c.ToString())] = x;
                     break;
                 case 'E':
                 case '5':
-                    rowE[Int32.Parse(c.ToString())] = x;
+                    grid[5, Int32.Parse(c.ToString())] = x;
                     break;
                 case 'F':
                 case '6':
-                    rowF[Int32.Parse(c.ToString())] = x;
+                    grid[6, Int32.Parse(c.ToString())] = x;
                     break;
                 case 'G':
                 case '7':
-                    rowG[Int32.Parse(c.ToString())] = x;
+                    grid[7, Int32.Parse(c.ToString())] = x;
                     break;
                 case 'H':
                 case '8':
-                    rowH[Int32.Parse(c.ToString())] = x;
+                    grid[8, Int32.Parse(c.ToString())] = x;
                     break;
                 case 'I':
                 case '9':
-                    rowI[Int32.Parse(c.ToString())] = x;
+                    grid[9, Int32.Parse(c.ToString())] = x;
                     break;
                 default:
                     break;
@@ -219,11 +204,11 @@ namespace grid
 
         public void Clear()
         {
-            for (int j = 1; j <= 9; j++)
+            for (int i = 1; i < 10; i++)
             {
-                for (int i = 1; i <= 9; i++)
+                for (int j = 1; j < 10; j++)
                 {
-                    rows[j][i] = '-';
+                    grid[i,j] = '-';
                 }
             }
         }
@@ -234,14 +219,14 @@ namespace grid
             int playerColumn = 0;
             int playerRow = 0;
 
-            for (int j = 1; j <= 9; j++)
+            for (int i = 1; i < 10; i++)
             {
-                for (int i = 1; i <= 9; i++)
+                for (int j = 1; j < 10; j++)
                 {
-                    if (rows[j][i] == Player)
+                    if (grid[i,j] == Player)
                     {
-                        playerRow = j;
-                        playerColumn = i;
+                        playerRow = i;
+                        playerColumn = j;
                         playerFound = true;
                         break;
                     }
@@ -282,8 +267,8 @@ namespace grid
             
             if (!invalid)
             {
-                rows[playerRow][playerColumn] = '-';
-                rows[newRow][newColumn] = Player;
+                grid[playerRow, playerColumn] = '-';
+                grid[newRow, newColumn] = Player;
             }
             Update();
         }

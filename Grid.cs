@@ -11,7 +11,13 @@ namespace grid
         public char Player
         {get; set;}
 
+        public ConsoleColor PlayerClr
+        {get; set;}
+
         public char Point
+        {get; set;}
+
+        public ConsoleColor PointClr
         {get; set;}
 
         public int Score
@@ -29,7 +35,13 @@ namespace grid
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    Console.Write(grid[i,j] + "  ");
+                    char c = grid[i,j];
+                    
+                    if (c == Point) {Console.ForegroundColor = PointClr;}
+                    else if (c == Player) {Console.ForegroundColor = PlayerClr;}
+                    else {Console.ForegroundColor = ConsoleColor.White;}
+                    
+                    Console.Write(c + "  ");
                 }
                 Console.WriteLine();
             }

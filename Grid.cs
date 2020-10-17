@@ -39,12 +39,13 @@ namespace grid
                     
                     if (c == Point) {Console.ForegroundColor = PointClr;}
                     else if (c == Player) {Console.ForegroundColor = PlayerClr;}
-                    else {Console.ForegroundColor = ConsoleColor.White;}
+                    else {Console.ForegroundColor = ConsoleColor.DarkGray;}
                     
                     Console.Write(c + "  ");
                 }
                 Console.WriteLine();
             }
+            Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("     SCORE:  " + Score);
             Console.WriteLine("     TIMER:  " + Timer);
         }

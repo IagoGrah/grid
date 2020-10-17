@@ -12,13 +12,13 @@ namespace grid
         {get; set;}
 
         public ConsoleColor PlayerClr
-        {get; set;}
+        {get; set;} = ConsoleColor.Cyan;
 
         public char Point
         {get; set;}
 
         public ConsoleColor PointClr
-        {get; set;}
+        {get; set;} = ConsoleColor.Green;
 
         public int Score
         {get; private set;}
